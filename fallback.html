@@ -24,9 +24,12 @@
             var userAgent = navigator.userAgent || navigator.vendor || window.opera;
 
             if (/android/i.test(userAgent)) {
-                window.location.href = "https://play.google.com/store/apps/details?id=com.mywallet.app";
+                //window.location.href = "https://play.google.com/store/apps/details?id=com.mywallet.app";
+                 window.location.href = "hhttps://authentification.quebec.ca/realms/sqin/login-actions/authenticate?execution=b1dd226e-60d2-4faf-bd50-4d2bb2695198&client_id=quebec-ca&tab_id=N3xbwWq6-vQ";
+                
             } else if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
-                window.location.href = "https://apps.apple.com/app/mywallet/id123456789";
+                //window.location.href = "https://apps.apple.com/app/mywallet/id123456789";
+                 window.location.href = "https://authentification.quebec.ca/realms/sqin/login-actions/authenticate?execution=b1dd226e-60d2-4faf-bd50-4d2bb2695198&client_id=quebec-ca&tab_id=N3xbwWq6-vQ";
             } else {
                 // Pour les autres plateformes, afficher un message
                 document.getElementById("message").innerHTML = "Veuillez installer l'application Wallet depuis votre store.";
