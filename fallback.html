@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Authentification - Wallet</title>
+    <script>
+        function openApp() {
+            var now = new Date().getTime();
+            
+            // Ouvrir l'application via un Deep Link
+            window.location.href = "didcomm://authentification.quebec.ca/gestion-compte/";
+
+            // Attendre 2 secondes et si l'application ne s'ouvre pas, proposer le téléchargement
+            setTimeout(function () {
+                var elapsed = new Date().getTime() - now;
+                if (elapsed < 2000) { // L'application ne s'est pas ouverte
+                    redirectToStore();
+                }
+            }, 1500);
+        }
+
+        function redirectToStore() {
+            var userAgent = navigator.userAgent || navigator.vendor || window.opera;
+
+            if (/android/i.test(userAgent)) {
+                window.location.href = "https://play.google.com/store/apps/details?id=com.mywallet.app";
+            } else if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+                window.location.href = "https://apps.apple.com/app/mywallet/id123456789";
+            } else {
+                // Pour les autres plateformes, afficher un message
+                document.getElementById("message").innerHTML = "Veuillez installer l'application Wallet depuis votre store.";
+            }
+        }
+    </script>
+</head>
+<body onload="openApp()">
+    <h2>Authentification en cours...</h2>
+    <p id="message">Si l'application ne s'ouvre pas, vous serez redirigé vers le store dans quelques secondes.</p>
+</body>
+</html>
