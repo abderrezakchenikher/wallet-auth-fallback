@@ -15,7 +15,7 @@
             // Attendre 2 secondes et si l'application ne s'ouvre pas, proposer le téléchargement
             setTimeout(function () {
                 var elapsed = new Date().getTime() - now;
-                if (elapsed < 2000) { // L'application ne s'est pas ouverte
+                if (elapsed < 5000) { // L'application ne s'est pas ouverte
                     redirectToStore();
                 }
             }, 1500);
