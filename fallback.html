@@ -11,9 +11,10 @@
                 let response = await fetch("http://192.168.2.40:8080/get-didcomm-url");
                 let data = await response.json();
 
+                console.log("URL reçue :", data.url); // Ajout pour tracer la valeur
+
                 if (data.url) {
                     openApp(data.url);
-                    console.log(" URL trouvée.: ",data.url);
                 } else {
                     console.error("Aucune URL trouvée.");
                     redirectToStore();
@@ -27,6 +28,8 @@
         function openApp(url) {
             var now = new Date().getTime();
             
+            console.log("Ouverture de l'application avec l'URL :", url); // Ajout pour tracer l'appel
+
             // Ouvrir l'application via l'URL reçue du backend
             window.location.href = url;
 
@@ -34,6 +37,7 @@
             setTimeout(function () {
                 var elapsed = new Date().getTime() - now;
                 if (elapsed < 5000) { 
+                    console.warn("Redirection vers le store après tentative d'ouverture.");
                     redirectToStore();
                 }
             }, 1500);
@@ -41,6 +45,8 @@
 
         function redirectToStore() {
             var userAgent = navigator.userAgent || navigator.vendor || window.opera;
+
+            console.warn("Redirection vers le store en fonction de l'OS...");
 
             if (/android/i.test(userAgent)) {
                 window.location.href = "https://play.google.com/store/apps/details?id=com.google.android.apps.walletnfcrel&hl=fr_CA";
@@ -59,3 +65,4 @@
     <p id="message">Si l'application ne s'ouvre pas, vous serez redirigé vers le store.</p>
 </body>
 </html>
+
