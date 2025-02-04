@@ -9,9 +9,9 @@
         try {
             let response = await fetch("https://192.168.2.40:8443/get-didcomm-url");
             let data = await response.json();
-
             if (data.url) {
-                openApp(data.url);
+	        let url = "${data.url}";
+                openApp(url);
             } else {
                 redirectToStore();
             }
@@ -47,7 +47,7 @@
                 document.getElementById("message").innerHTML = "Veuillez installer l'application Wallet depuis votre store.";
             }
         }
-        window.onload = fetchDidcommUrl();
+        window.onload = fetchDidcommUrl;
     </script>
 </head>
 <body onload="openApp()">
