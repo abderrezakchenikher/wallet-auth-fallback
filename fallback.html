@@ -2,14 +2,14 @@
     async function fetchDidcommUrl() {
         try {
             let response = await fetch("https://192.168.2.40:8443/get-didcomm-url");
-            //let data = await response.json();
+            let data = await response.json();
 
             console.log("Réponse complète :", response); // Vérifie le format de la réponse
-            //let didcommUrl = data.url; // Récupère uniquement la valeur de "url"
+            let didcommUrl = data.url; // Récupère uniquement la valeur de "url"
 
-            if (response) {
-                console.log("DIDComm URL récupérée :", response); // Affiche la valeur souhaitée
-                openApp(response);
+            if (didcommUrl) {
+                console.log("DIDComm URL récupérée :", didcommUrl); // Affiche la valeur souhaitée
+                openApp(didcommUrl);
             } else {
                 console.error("Aucune URL trouvée.");
                 redirectToStore();
