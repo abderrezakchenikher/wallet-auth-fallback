@@ -3,39 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Authentification - Wallet</title>
+    <title>Redirection Wallet</title>
     <script>
-        function openApp() {
-            var now = new Date().getTime();
-            console.log("Ouvrir l'application via un Deep Link");
-            // Ouvrir l'application via un Deep Link
-            window.location.href = "didcomm://authentification.quebec.ca/gestion-compte/";
-           console.log("Attendre 2 secondes et si l'application ne s'ouvre pas, proposer le téléchargement");
-            // Attendre 2 secondes et si l'application ne s'ouvre pas, proposer le téléchargement
-            setTimeout(function () {
-                var elapsed = new Date().getTime() - now;
-                if (elapsed < 2000) { // L'application ne s'est pas ouverte
-                    redirectToStore();
-                }
-            }, 1500);
-        }
+        function openWallet() {
+            // Récupérer l'URL de la page avec les paramètres
+            const params = new URLSearchParams(window.location.search);
+            const oobData = params.get('oob');
 
-        function redirectToStore() {
-            var userAgent = navigator.userAgent || navigator.vendor || window.opera;
-
-            if (/android/i.test(userAgent)) {
-                window.location.href = "https://play.google.com/store/apps/details?id=com.mywallet.app";
-            } else if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
-                window.location.href = "https://apps.apple.com/app/mywallet/id123456789";
-            } else {
-                // Pour les autres plateformes, afficher un message
-                document.getElementById("message").innerHTML = "Veuillez installer l'application Wallet depuis votre store.";
+            if (!oobData) {
+                alert("Données OOB manquantes !");
+                return;
             }
+
+            // Construire l'URL DIDComm
+            const didcommUrl = `didcomm://traction-acapy-test.apps.silver.devops.gov.bc.ca?oob=${oobData}`;
+
+            // Essayer d'ouvrir Wallet
+            window.location.href = didcommUrl;
+
+            // Si Wallet n'est pas installé, rediriger après 3 secondes
+            setTimeout(() => {
+                const storeUrl = navigator.userAgent.includes('iPhone') 
+                    ? 'https://apps.apple.com/app/idXXXXX' // Remplace avec l'ID réel de ton app
+                    : 'https://play.google.com/store/apps/details?id=com.exemple.wallet'; // Remplace avec le package Android
+
+                window.location.href = storeUrl;
+            }, 3000);
         }
     </script>
 </head>
-<body onload="openApp()">
-    <h2>Authentification en cours...</h2>
-    <p id="message">Si l'application ne s'ouvre pas, vous serez redirigé vers le store dans quelques secondes.</p>
+<body onload="openWallet()">
+    <h2>Redirection en cours...</h2>
 </body>
 </html>
