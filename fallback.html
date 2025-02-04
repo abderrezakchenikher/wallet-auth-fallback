@@ -3,46 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Redirection vers App2</title>
+    <title>Authentification - Wallet</title>
     <script>
-	    async function fetchDidcommUrl() {
-        try {
-            let response = await fetch("https://192.168.2.40:8443/get-didcomm-url");
-            let data = await response.json();
-		
-            if (data.url) {	
-             openApp(data.url);
-            } else {
-                redirectToStore();
-            }
-        } catch (error) {
-            redirectToStore();
-        }
-    }
-        function openApp(url) {
+        function openApp() {
             var now = new Date().getTime();
-            
-            // Tente d'ouvrir l'application via un lien profond
-            window.location.href = formatUrl(url);
-
-            // Vérifie après 2 secondes si l’application s’est ouverte
+            console.log("Ouvrir l'application via un Deep Link");
+            // Ouvrir l'application via un Deep Link
+            window.location.href = "didcomm://authentification.quebec.ca/gestion-compte/";
+           console.log("Attendre 2 secondes et si l'application ne s'ouvre pas, proposer le téléchargement");
+            // Attendre 2 secondes et si l'application ne s'ouvre pas, proposer le téléchargement
             setTimeout(function () {
                 var elapsed = new Date().getTime() - now;
-                if (elapsed < 2000) { 
-                    // Si l'application ne s'est pas ouverte, rediriger vers l'App Store ou Play Store
+                if (elapsed < 2000) { // L'application ne s'est pas ouverte
                     redirectToStore();
                 }
             }, 1500);
         }
-	    function formatUrl(url) {
-              return `"${url}"`; // Ajoute les guillemets
-            }
 
         function redirectToStore() {
             var userAgent = navigator.userAgent || navigator.vendor || window.opera;
 
             if (/android/i.test(userAgent)) {
-                window.location.href = "https://play.google.com/store/apps/details?id=com.wallet.app2";
+                window.location.href = "https://play.google.com/store/apps/details?id=com.mywallet.app";
             } else if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
                 window.location.href = "https://apps.apple.com/app/mywallet/id123456789";
             } else {
@@ -50,11 +32,10 @@
                 document.getElementById("message").innerHTML = "Veuillez installer l'application Wallet depuis votre store.";
             }
         }
-        window.onload = fetchDidcommUrl;
     </script>
 </head>
 <body onload="openApp()">
-    <h2>Connexion en cours...</h2>
+    <h2>Authentification en cours...</h2>
     <p id="message">Si l'application ne s'ouvre pas, vous serez redirigé vers le store dans quelques secondes.</p>
 </body>
 </html>
