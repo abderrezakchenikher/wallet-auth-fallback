@@ -8,7 +8,7 @@
         async function fetchDidcommUrl() {
             try {
                 // Appeler l'API Quarkus pour récupérer l'URL
-                let response = await fetch("http://192.168.2.40:8080/get-didcomm-url");
+                let response = await fetch("https://192.168.2.40:8443/get-didcomm-url");
                 let data = await response.json();
 
                 console.log("URL reçue :", data.url); // Ajout pour tracer la valeur
