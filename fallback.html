@@ -1,68 +1,47 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Authentification - Wallet</title>
-    <script>
-        async function fetchDidcommUrl() {
-            try {
-                // Appeler l'API Quarkus pour récupérer l'URL
-                let response = await fetch("https://192.168.2.40:8443/get-didcomm-url");
-                let data = await response.json();
+<script>
+    async function fetchDidcommUrl() {
+        try {
+            let response = await fetch("https://192.168.2.40:8443/get-didcomm-url");
+            let data = await response.json();
 
-                console.log("URL reçue :", data.url); // Ajout pour tracer la valeur
+            console.log("Réponse complète :", data); // Vérifie le format de la réponse
+            let didcommUrl = data.url; // Récupère uniquement la valeur de "url"
 
-                if (data.url) {
-                    openApp(data.url);
-                } else {
-                    console.error("Aucune URL trouvée.");
-                    redirectToStore();
-                }
-            } catch (error) {
-                console.error("Erreur API :", error);
+            if (didcommUrl) {
+                console.log("DIDComm URL récupérée :", didcommUrl); // Affiche la valeur souhaitée
+                openApp(didcommUrl);
+            } else {
+                console.error("Aucune URL trouvée.");
                 redirectToStore();
             }
+        } catch (error) {
+            console.error("Erreur API :", error);
+            redirectToStore();
         }
+    }
 
-        function openApp(url) {
-            var now = new Date().getTime();
-            
-            console.log("Ouverture de l'application avec l'URL :", url); // Ajout pour tracer l'appel
+    function openApp(url) {
+        console.log("Ouverture de l'application avec l'URL :", url);
+        window.location.href = url;
 
-            // Ouvrir l'application via l'URL reçue du backend
-            window.location.href = url;
+        setTimeout(() => {
+            console.warn("Redirection vers le store après tentative d'ouverture.");
+            redirectToStore();
+        }, 1500);
+    }
 
-            // Vérifier après 2 secondes si l’application ne s’est pas ouverte
-            setTimeout(function () {
-                var elapsed = new Date().getTime() - now;
-                if (elapsed < 5000) { 
-                    console.warn("Redirection vers le store après tentative d'ouverture.");
-                    redirectToStore();
-                }
-            }, 1500);
+    function redirectToStore() {
+        console.warn("Redirection vers le store...");
+        let userAgent = navigator.userAgent || navigator.vendor || window.opera;
+
+        if (/android/i.test(userAgent)) {
+            window.location.href = "https://play.google.com/store/apps/details?id=com.google.android.apps.walletnfcrel&hl=fr_CA";
+        } else if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+            window.location.href = "https://apps.apple.com/ca/app/apple-wallet/id1160481993?l=fr-CA";
+        } else {
+            document.getElementById("message").innerHTML = "Veuillez installer l'application Wallet.";
         }
+    }
 
-        function redirectToStore() {
-            var userAgent = navigator.userAgent || navigator.vendor || window.opera;
-
-            console.warn("Redirection vers le store en fonction de l'OS...");
-
-            if (/android/i.test(userAgent)) {
-                window.location.href = "https://play.google.com/store/apps/details?id=com.google.android.apps.walletnfcrel&hl=fr_CA";
-            } else if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
-                window.location.href = "https://apps.apple.com/ca/app/apple-wallet/id1160481993?l=fr-CA";
-            } else {
-                document.getElementById("message").innerHTML = "Veuillez installer l'application Wallet.";
-            }
-        }
-
-        window.onload = fetchDidcommUrl;
-    </script>
-</head>
-<body>
-    <h2>Authentification en cours...</h2>
-    <p id="message">Si l'application ne s'ouvre pas, vous serez redirigé vers le store.</p>
-</body>
-</html>
-
+    window.onload = fetchDidcommUrl;
+</script>
