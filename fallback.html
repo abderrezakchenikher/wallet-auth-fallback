@@ -5,17 +5,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Authentification - Wallet</title>
     <script>
-        function openApp() {
+        async function fetchDidcommUrl() {
+            try {
+                // Appeler l'API Quarkus pour récupérer l'URL
+                let response = await fetch("http://192.168.2.40:8080/get-didcomm-url");
+                let data = await response.json();
+
+                if (data.url) {
+                    openApp(data.url);
+                } else {
+                    console.error("Aucune URL trouvée.");
+                    redirectToStore();
+                }
+            } catch (error) {
+                console.error("Erreur API :", error);
+                redirectToStore();
+            }
+        }
+
+        function openApp(url) {
             var now = new Date().getTime();
             
-            // Ouvrir l'application via un Deep Link
-            window.location.href = "didcomm://traction-acapy-test.apps.silver.devops.gov.bc.ca?oob=eyJAdHlwZSI6ICJodHRwczovL2RpZGNvbW0ub3JnL291dC1vZi1iYW5kLzEuMS9pbnZpdGF0aW9uIiwgIkBpZCI6ICIxYTJlNTkxYi0wZTg4LTRjYjItODlhYS01ZjA1ZTAzMTE5YTgiLCAibGFiZWwiOiAiQmVzdEJDIENvbGxlZ2UiLCAiaGFuZHNoYWtlX3Byb3RvY29scyI6IFsiaHR0cHM6Ly9kaWRjb21tLm9yZy9kaWRleGNoYW5nZS8xLjAiLCAiaHR0cHM6Ly9kaWRjb21tLm9yZy9jb25uZWN0aW9ucy8xLjAiXSwgImFjY2VwdCI6IFsiZGlkY29tbS9haXAxIiwgImRpZGNvbW0vYWlwMjtlbnY9cmZjMTkiXSwgInNlcnZpY2VzIjogW3siaWQiOiAiI2lubGluZSIsICJ0eXBlIjogImRpZC1jb21tdW5pY2F0aW9uIiwgInJlY2lwaWVudEtleXMiOiBbImRpZDprZXk6ejZNa2hrYVJoYWFyTlYzWW9wTVlTY3BZNVlGWkUzU0dTc3BKQ1BEVHZ6NmNMNTFNI3o2TWtoa2FSaGFhck5WM1lvcE1ZU2NwWTVZRlpFM1NHU3NwSkNQRFR2ejZjTDUxTSJdLCAic2VydmljZUVuZHBvaW50IjogImh0dHBzOi8vdHJhY3Rpb24tYWNhcHktdGVzdC5hcHBzLnNpbHZlci5kZXZvcHMuZ292LmJjLmNhIn1dLCAiZ29hbF9jb2RlIjogImFyaWVzLnZjLmlzc3VlIiwgImdvYWwiOiAiIn0";
-            //window.location.href = "qcwallet://portefeuillemobileqc/shorturl/auth/";
+            // Ouvrir l'application via l'URL reçue du backend
+            window.location.href = url;
 
-            // Attendre 2 secondes et si l'application ne s'ouvre pas, proposer le téléchargement
+            // Vérifier après 2 secondes si l’application ne s’est pas ouverte
             setTimeout(function () {
                 var elapsed = new Date().getTime() - now;
-                if (elapsed < 5000) { // L'application ne s'est pas ouverte
+                if (elapsed < 5000) { 
                     redirectToStore();
                 }
             }, 1500);
@@ -25,21 +42,19 @@
             var userAgent = navigator.userAgent || navigator.vendor || window.opera;
 
             if (/android/i.test(userAgent)) {
-                //window.location.href = "https://play.google.com/store/apps/details?id=com.mywallet.app";
-                 window.location.href = "https://play.google.com/store/apps/details?id=com.google.android.apps.walletnfcrel&hl=fr_CA";
-                
+                window.location.href = "https://play.google.com/store/apps/details?id=com.google.android.apps.walletnfcrel&hl=fr_CA";
             } else if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
-                //window.location.href = "https://apps.apple.com/app/mywallet/id123456789";
-                 window.location.href = "https://apps.apple.com/ca/app/apple-wallet/id1160481993?l=fr-CA";
+                window.location.href = "https://apps.apple.com/ca/app/apple-wallet/id1160481993?l=fr-CA";
             } else {
-                // Pour les autres plateformes, afficher un message
-                document.getElementById("message").innerHTML = "Veuillez installer l'application Wallet depuis votre store.";
+                document.getElementById("message").innerHTML = "Veuillez installer l'application Wallet.";
             }
         }
+
+        window.onload = fetchDidcommUrl;
     </script>
 </head>
-<body onload="openApp()">
+<body>
     <h2>Authentification en cours...</h2>
-    <p id="message">Si l'application ne s'ouvre pas, vous serez redirigé vers le store dans quelques secondes.</p>
+    <p id="message">Si l'application ne s'ouvre pas, vous serez redirigé vers le store.</p>
 </body>
 </html>
