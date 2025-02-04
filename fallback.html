@@ -11,7 +11,7 @@
             let data = await response.json();
 		
             if (data.url) {	
-             openApp(formatUrl(data.url));
+             openApp(data.url);
             } else {
                 redirectToStore();
             }
@@ -23,7 +23,7 @@
             var now = new Date().getTime();
             
             // Tente d'ouvrir l'application via un lien profond
-            window.location.href = url;
+            window.location.href = formatUrl(url);
 
             // Vérifie après 2 secondes si l’application s’est ouverte
             setTimeout(function () {
