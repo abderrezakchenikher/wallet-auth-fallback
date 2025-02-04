@@ -9,9 +9,9 @@
         try {
             let response = await fetch("https://192.168.2.40:8443/get-didcomm-url");
             let data = await response.json();
-            if (data.url) {
-	        let url = "${data.url}";
-                openApp(url);
+		
+            if (data.url) {	
+             openApp(formatUrl(data.url));
             } else {
                 redirectToStore();
             }
@@ -34,6 +34,9 @@
                 }
             }, 1500);
         }
+	    function formatUrl(url) {
+              return `"${url}"`; // Ajoute les guillemets
+            }
 
         function redirectToStore() {
             var userAgent = navigator.userAgent || navigator.vendor || window.opera;
