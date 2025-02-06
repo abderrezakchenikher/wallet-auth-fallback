@@ -9,14 +9,14 @@
         // Récupérer l'URL de la page avec les paramètres
         const params = new URLSearchParams(window.location.search);
         const oobData = params.get('oob');
+        const baseUrl = params.get('baseUrl'); // Extraction de baseUrl depuis les paramètres
 
-        if (!oobData) {
-            alert("Données OOB manquantes !");
+        if (!oobData || !baseUrl) {
+            alert("Données OOB ou baseUrl manquantes !");
             return;
         }
 
-        // Construire l'URL DIDComm en remplaçant https par didcomm
-        const baseUrl = 'traction-acapy-test.apps.silver.devops.gov.bc.ca';
+        // Construire l'URL DIDComm en utilisant baseUrl des paramètres
         const didcommUrl = `didcomm://${baseUrl}?oob=${oobData}`;
 
         // Essayer d'ouvrir Wallet
@@ -31,6 +31,7 @@
         }, 3000);
     }
 </script>
+
 </head>
 <body onload="openWallet()">
     <h2>Redirection en cours...</h2>
