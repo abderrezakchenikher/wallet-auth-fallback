@@ -9,13 +9,13 @@
         // Récupérer l'URL de la page avec les paramètres
         const params = new URLSearchParams(window.location.search);
         const oobData = params.get('oob');
-        const baseUrl = params.get('baseUrl'); // Extraction de baseUrl depuis les paramètres
+        //const baseUrl = params.get('baseUrl'); // Extraction de baseUrl depuis les paramètres
 
-        if (!oobData || !baseUrl) {
+        if (!oobData) {
             alert("Données OOB ou baseUrl manquantes !");
             return;
         }
-
+       const baseUrl = window.location.hostname;
         // Construire l'URL DIDComm en utilisant baseUrl des paramètres
         const didcommUrl = `didcomm://${baseUrl}?oob=${oobData}`;
 
