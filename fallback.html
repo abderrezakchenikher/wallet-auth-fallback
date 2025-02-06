@@ -16,6 +16,7 @@
             return;
         }
        const baseUrl = window.location.hostname;
+        console.log(baseUrl);
         // Construire l'URL DIDComm en utilisant baseUrl des paramètres
         const didcommUrl = `didcomm://${baseUrl}?oob=${oobData}`;
 
