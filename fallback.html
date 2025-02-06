@@ -24,9 +24,10 @@
             // Si Wallet n'est pas installé, rediriger après 3 secondes
             setTimeout(() => {
                 const storeUrl = navigator.userAgent.includes('iPhone') 
-                    ? 'https://apps.apple.com/app/idXXXXX' // Remplace avec l'ID réel de ton app
-                    : 'https://play.google.com/store/apps/details?id=com.exemple.wallet'; // Remplace avec le package Android
-
+                    //? 'https://apps.apple.com/ca/app/bc-wallet/id1587380443?l=fr-CA' // Remplace avec l'ID réel de ton app                   
+                    //: 'https://play.google.com/store/apps/details?id=ca.bc.gov.BCWallet'; // Remplace avec le package Android
+                    ? 'https://www.quebec.ca/' // Remplace avec l'ID réel de ton app
+                    : 'https://www.quebec.ca/'; // Remplace avec le package Android
                 window.location.href = storeUrl;
             }, 3000);
         }
