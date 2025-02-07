@@ -1,74 +1,40 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Redirection Wallet</title>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Redirection Wallet</title>
 <script>
-
-   const getBrowser = () => {
-
-      let userAgent = navigator.userAgent || navigator.vendor;
+   function openWallet() {
+       // Récupérer l'URL de la page avec les paramètres
+       const params = new URLSearchParams(window.location.search);
+       const oobData = params.get('oob');
+       //const baseUrl = params.get('baseUrl'); // Extraction de baseUrl depuis les paramètres
  
-      if (/android/i.test(userAgent)) {
-
-        return "Android";
-
-      }
+       if (!oobData) {
+           alert("Données OOB ou baseUrl manquantes !");
+           return;
+       }
+      //const baseUrl = window.location.hostname;
+       //console.log(baseUrl);
+       // Construire l'URL DIDComm en utilisant baseUrl des paramètres
+       const didcommUrl = `didcomm://qcwallet://aries_proof-request?oob=${oobData}`;
  
-      if (
-
-        /iPad|iPhone|iPod/.test(userAgent) ||
-
-        (/Macintosh/.test(userAgent) && "ontouchend" in document) ||
-
-        (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1) ||
-
-        (navigator.vendor && navigator.vendor.indexOf("Apple") > -1)
-
-      ) {
-
-        return "iOS";
-
-      }
+       // Essayer d'ouvrir Wallet
+       window.location.href = didcommUrl;
  
-      return "unknown";
-
-    }
- 
-   const isMobile = () => (getBrowser() === "Android" || getBrowser() === "iOS")
-
-   try {
-
-     if (isMobile()) {
-
-       // Set the url for downloading the wallet depending on platform
-
-       document.getElementById("download-link").href = getBrowser() === "Android"
-
-                                                     ? "https://play.google.com/store/apps/details?id=ca.bc.gov.BCWallet"
-
-                                                     : "https://apps.apple.com/us/app/bc-wallet/id1587380443"
-
-       // Attempt to open the BC wallet if installed
-
-       window.location.href = "bcwallet://aries_proof-request?_url=aHR0cHM6Ly92Yy1hdXRobi1vaWRjLmFwcHMuc2lsdmVyLmRldm9wcy5nb3YuYmMuY2EvdXJsL3ByZXNfZXhjaC8wNDBmZTUxYy04ZDdlLTRiMTctODg2ZS0zNGM1YWI5NzEwZjI="
-
-     } else {
-
-       document.getElementById("open-in-wallet").style.display = "none";
-
-     }
-
-   } catch (e) {
-
-     console.log("Error hiding browser element", e);
-
+       // Si Wallet n'est pas installé, rediriger après 3 secondes
+       setTimeout(() => {
+           const storeUrl = navigator.userAgent.includes('iPhone')
+               ? 'https://www.quebec.ca/' // Remplace avec l'ID réel de ton app
+               : 'https://www.quebec.ca/'; // Remplace avec le package Android
+           window.location.href = storeUrl;
+       }, 3000);
    }
 </script>
  
 </head>
 <body onload="openWallet()">
-    <h2>Redirection en cours...</h2>
+   <h2>Redirection en cours...</h2>
 </body>
 </html>
