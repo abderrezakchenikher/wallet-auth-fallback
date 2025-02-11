@@ -8,11 +8,11 @@
    function openWallet() {
        // Récupérer l'URL de la page avec les paramètres
        const params = new URLSearchParams(window.location.search);
-       const urlData = params.get('_url');
+       const oobData = params.get('_oob');
        //const baseUrl = params.get('baseUrl'); // Extraction de baseUrl depuis les paramètres
  
-       if (!urlData) {
-           alert("Données url ou baseUrl manquantes !");
+       if (!oobData) {
+           alert("Données oob ou baseUrl manquantes !");
            return;
        }
       //const baseUrl = window.location.hostname;
@@ -20,7 +20,7 @@
       //const url = 'https://sqin-app-sai-gestion-url-inc-dev.dev.authentification.si.gouv.qc.ca:443/i/436d260b-7291-4f13-85c4-4468a977fb4d';
        // Construire l'URL DIDComm en utilisant baseUrl des paramètres
       //const didcommUrl = `qcwallet://aries_proof-request?_url=aHR0cHM6Ly9zcWluLWFwcC1zYWktZ2VzdGlvbi11cmwtaW5jLWRldi5kZXYuYXV0aGVudGlmaWNhdGlvbi5zaS5nb3V2LnFjLmNhOjQ0My9pLzQzNmQyNjBiLTcyOTEtNGYxMy04NWM0LTQ0NjhhOTc3ZmI0ZA==`;
-      const didcommUrl = `https://rttdz.wuaze.com?url=${urlData}`;
+      const didcommUrl = `didcomm://rttdz.wuaze.com?oob=${oobData}`;
        // Essayer d'ouvrir Wallet
        window.location.href = didcommUrl;
  
