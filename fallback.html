@@ -21,9 +21,9 @@
 
            // Construction de l'URL selon le paramètre disponible
            if (oobData) {
-               httpsUrl += `oob=${encodeURIComponent(oobData)}`;
+               httpsUrl += `oob=${oobData}`;
            } else {
-               httpsUrl += `url=${encodeURIComponent(urlData)}`;
+               httpsUrl += `url=${urlData}`;
            }
 
            // Redirection vers le wallet
