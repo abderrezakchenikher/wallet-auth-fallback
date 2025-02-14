@@ -12,7 +12,7 @@
        const urlData = params.get('_url');
        //const baseUrl = params.get('baseUrl'); // Extraction de baseUrl depuis les paramètres
  
-       if (!(oobData && urlData)) {
+       if (!(oobData || urlData)) {
            alert("Données oob ou baseUrl manquantes !");
            return;
        }
