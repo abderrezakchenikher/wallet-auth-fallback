@@ -1,11 +1,11 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="fr">
 <head>
    <meta charset="UTF-8">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
    <title>Redirection Wallet</title>
    <script>
-       function openWallet() {
+       async function openWallet() {
            // Récupérer l'URL de la page avec les paramètres
            const params = new URLSearchParams(window.location.search);
            const oobData = params.get('_oob');
@@ -17,7 +17,7 @@
            }
 
            // Base de l'URL du wallet
-           let httpsUrl = "https://rttdz.wuaze.com/wallet/?";
+           let httpsUrl = "https://mcn.qcwallet.com/wallet/?";
 
            // Construction de l'URL selon le paramètre disponible
            if (oobData) {
@@ -26,17 +26,28 @@
                httpsUrl += `_url=${urlData}`;
            }
 
-           // Redirection vers le wallet
-           window.location.href = httpsUrl;
+           try {
+               // Vérifier si l'URL est accessible avec un statut HTTP 200
+               const response = await fetch(httpsUrl, { method: 'HEAD', mode: 'no-cors' });
 
-           // Si Wallet n'est pas installé, rediriger après 3 secondes vers un store
-           setTimeout(() => {
-               const storeUrl = navigator.userAgent.includes('iPhone')
-                   ? 'https://www.quebec.ca/' // Remplace par l'URL réelle de l'App Store
-                   : 'https://www.quebec.ca/'; // Remplace par l'URL réelle du Play Store
+               if (response.ok) {
+                   // Si l'URL répond correctement, rediriger vers le Wallet
+                   window.location.href = httpsUrl;
+               } else {
+                   throw new Error("L'application ne semble pas installée.");
+               }
+           } catch (error) {
+               console.warn("Échec de l'accès à l'URL du Wallet, redirection vers le store.");
+               
+               // Redirection vers le store après 3 secondes
+               setTimeout(() => {
+                   const storeUrl = navigator.userAgent.includes('iPhone')
+                       ? 'https://www.quebec.ca/'  // Remplace par l'URL réelle de l'App Store
+                       : 'https://www.quebec.ca/';  // Remplace par l'URL réelle du Play Store
 
-               window.location.href = storeUrl;
-           }, 3000);
+                   window.location.href = storeUrl;
+               }, 3000);
+           }
        }
    </script>
 </head>
