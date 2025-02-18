@@ -28,7 +28,7 @@
 
            try {
                // Vérifier si l'URL est accessible avec un statut HTTP 200
-               const response = await fetch(httpsUrl, { method: 'HEAD', mode: 'no-cors' });
+               const response = await fetch(httpsUrl, { method: 'HEAD'});
 
                if (response.ok) {
                    // Si l'URL répond correctement, rediriger vers le Wallet
