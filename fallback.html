@@ -5,7 +5,7 @@
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
    <title>Redirection Wallet</title>
    <script>
-       function openWallet() {
+       async function openWallet() {
            // Récupérer les paramètres de l'URL
            const params = new URLSearchParams(window.location.search);
            const oobData = params.get('_oob');
@@ -16,37 +16,41 @@
                return;
            }
 
-           // Construire l'URL pour le deep link
-           let deepLink = "rttdz.wuaze.com://wallet/?";
-
+           // Construire l'URL universelle HTTPS
+           let universalLink = "https://rttdz.wuaze.com/wallet/?";
            if (oobData) {
-               deepLink += `oob=${encodeURIComponent(oobData)}`;
+               universalLink += `oob=${encodeURIComponent(oobData)}`;
            } else {
-               deepLink += `_url=${encodeURIComponent(urlData)}`;
-           }
-
-           // URL HTTPS fallback si l'application n'est pas installée
-           let httpsUrl = `https://rttdz.wuaze.com/wallet/?`;
-           if (oobData) {
-               httpsUrl += `oob=${encodeURIComponent(oobData)}`;
-           } else {
-               httpsUrl += `_url=${encodeURIComponent(urlData)}`;
+               universalLink += `_url=${encodeURIComponent(urlData)}`;
            }
 
            // Déterminer l'URL de fallback (store)
            const storeUrl = navigator.userAgent.includes('iPhone')
-               ? 'https://www.quebec.ca/'  // Remplace avec l'App Store ID
-               : 'https://www.quebec.ca/';  // Remplace avec le package name Android
+               ? 'https://apps.apple.com/app/idXXXXXXXXX'  // Remplace avec ton App Store ID
+               : 'https://play.google.com/store/apps/details?id=com.walletbc';  // Remplace avec le package Android
 
-           // Tentative d'ouverture de l'application Wallet
+           // Vérifier si l'URL existe avant de rediriger
+           try {
+               const response = await fetch(universalLink, { method: 'HEAD' });
+               if (response.status === 404) {
+                   console.warn("Page introuvable, redirection vers le store...");
+                   window.location.href = storeUrl;
+                   return;
+               }
+           } catch (error) {
+               console.warn("Échec de l'accès à l'URL du Wallet, redirection vers le store...");
+               window.location.href = storeUrl;
+               return;
+           }
+
+           // Redirection vers l'application via l'URL universelle
            const startTime = new Date().getTime();
-           window.location.href = httpsUrl;
+           window.location.href = universalLink;
 
-           // Vérifier si l'application est installée (si l'utilisateur ne quitte pas la page)
+           // Si l'utilisateur reste sur la page après 1.5s, il est redirigé vers le store
            setTimeout(() => {
                const elapsed = new Date().getTime() - startTime;
                if (elapsed < 2000) {
-                   // L'application n'est probablement pas installée, redirige vers le store
                    window.location.href = storeUrl;
                }
            }, 1500);
