@@ -33,8 +33,6 @@
                if (response.ok) {
                    // Si l'URL répond correctement, rediriger vers le Wallet
                    window.location.href = httpsUrl;
-               } else {
-                   throw new Error("L'application ne semble pas installée.");
                }
            } catch (error) {
                console.warn("Échec de l'accès à l'URL du Wallet, redirection vers le store.");
