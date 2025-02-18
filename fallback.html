@@ -5,8 +5,8 @@
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
    <title>Redirection Wallet</title>
    <script>
-       function openWallet() {
-           // Récupérer les paramètres de l'URL
+       async function openWallet() {
+           // Récupérer l'URL de la page avec les paramètres
            const params = new URLSearchParams(window.location.search);
            const oobData = params.get('_oob');
            const urlData = params.get('_url');
@@ -16,53 +16,38 @@
                return;
            }
 
-           // Construire l'URL universelle HTTPS pour iOS et les navigateurs modernes
-           let universalLink = "https://rttdz.wuaze.com/wallet/?";
+           // Base de l'URL du wallet
+           let httpsUrl = "https://rttdz.wuaze.com/wallet/?";
+
+           // Construction de l'URL selon le paramètre disponible
            if (oobData) {
-               universalLink += `oob=${encodeURIComponent(oobData)}`;
+               httpsUrl += `oob=${oobData}`;
            } else {
-               universalLink += `_url=${encodeURIComponent(urlData)}`;
+               httpsUrl += `_url=${urlData}`;
            }
 
-           // Intent Link pour Android (remplace `com.walletbc` par le package réel de ton app)
-           let intentLink = `intent://rttdz.wuaze.com/wallet/?`;
-           if (oobData) {
-               intentLink += `oob=${encodeURIComponent(oobData)}`;
-           } else {
-               intentLink += `_url=${encodeURIComponent(urlData)}`;
-           }
-           intentLink += `#Intent;scheme=https;package=com.walletbc;end;`;
+           try {
+               // Vérifier si l'URL est accessible avec un statut HTTP 200
+               const response = await fetch(httpsUrl, { method: 'HEAD', mode: 'no-cors' });
 
-           // Déterminer l'URL de fallback (store)
-           const storeUrl = navigator.userAgent.includes('iPhone')
-               ? 'https://apps.apple.com/app/idXXXXXXXXX'  // Remplace avec ton App Store ID
-               : 'https://play.google.com/store/apps/details?id=com.walletbc';  // Remplace avec ton package Android
-
-           // Vérifier si c'est un appareil Android
-           const isAndroid = /Android/i.test(navigator.userAgent);
-           const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
-
-           const startTime = new Date().getTime();
-
-           if (isAndroid) {
-               // Rediriger vers Intent Link pour Android
-               window.location.href = intentLink;
-           } else if (isIOS) {
-               // Rediriger vers Universal Link pour iOS
-               window.location.href = universalLink;
-           } else {
-               // Pour d'autres plateformes, utiliser le lien HTTPS
-               window.location.href = universalLink;
-           }
-
-           // Vérification après 1.5s si l'application s'est ouverte
-           setTimeout(() => {
-               const elapsed = new Date().getTime() - startTime;
-               if (elapsed < 2000) {
-                   // L'application ne s'est pas ouverte, redirection vers le Store
-                   window.location.href = storeUrl;
+               if (response.ok) {
+                   // Si l'URL répond correctement, rediriger vers le Wallet
+                   window.location.href = httpsUrl;
+               } else {
+                   throw new Error("L'application ne semble pas installée.");
                }
-           }, 1500);
+           } catch (error) {
+               console.warn("Échec de l'accès à l'URL du Wallet, redirection vers le store.");
+               
+               // Redirection vers le store après 3 secondes
+               setTimeout(() => {
+                   const storeUrl = navigator.userAgent.includes('iPhone')
+                       ? 'https://www.quebec.ca/'  // Remplace par l'URL réelle de l'App Store
+                       : 'https://www.quebec.ca/';  // Remplace par l'URL réelle du Play Store
+
+                   window.location.href = storeUrl;
+               }, 3000);
+           }
        }
    </script>
 </head>
