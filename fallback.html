@@ -5,8 +5,8 @@
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
    <title>Redirection Wallet</title>
    <script>
-       async function openWallet() {
-           // Récupérer l'URL de la page avec les paramètres
+       function openWallet() {
+           // Récupérer les paramètres de l'URL
            const params = new URLSearchParams(window.location.search);
            const oobData = params.get('_oob');
            const urlData = params.get('_url');
@@ -16,38 +16,40 @@
                return;
            }
 
-           // Base de l'URL du wallet
-           let httpsUrl = "https://rttdz.wuaze.com/wallet/?";
+           // Construire l'URL pour le deep link
+           let deepLink = "rttdz.wuaze.com://wallet/?";
 
-           // Construction de l'URL selon le paramètre disponible
            if (oobData) {
-               httpsUrl += `oob=${oobData}`;
+               deepLink += `oob=${encodeURIComponent(oobData)}`;
            } else {
-               httpsUrl += `_url=${urlData}`;
+               deepLink += `_url=${encodeURIComponent(urlData)}`;
            }
 
-           try {
-               // Vérifier si l'URL est accessible avec un statut HTTP 200
-               const response = await fetch(httpsUrl, { method: 'HEAD', mode: 'no-cors' });
+           // URL HTTPS fallback si l'application n'est pas installée
+           let httpsUrl = `https://rttdz.wuaze.com/wallet/?`;
+           if (oobData) {
+               httpsUrl += `oob=${encodeURIComponent(oobData)}`;
+           } else {
+               httpsUrl += `_url=${encodeURIComponent(urlData)}`;
+           }
 
-               if (response.ok) {
-                   // Si l'URL répond correctement, rediriger vers le Wallet
-                   window.location.href = httpsUrl;
-               } else {
-                   throw new Error("L'application ne semble pas installée.");
-               }
-           } catch (error) {
-               console.warn("Échec de l'accès à l'URL du Wallet, redirection vers le store.");
-               
-               // Redirection vers le store après 3 secondes
-               setTimeout(() => {
-                   const storeUrl = navigator.userAgent.includes('iPhone')
-                       ? 'https://www.quebec.ca/'  // Remplace par l'URL réelle de l'App Store
-                       : 'https://www.quebec.ca/';  // Remplace par l'URL réelle du Play Store
+           // Déterminer l'URL de fallback (store)
+           const storeUrl = navigator.userAgent.includes('iPhone')
+               ? 'https://apps.apple.com/app/idXXXXXXXXX'  // Remplace avec l'App Store ID
+               : 'https://play.google.com/store/apps/details?id=com.walletbc';  // Remplace avec le package name Android
 
+           // Tentative d'ouverture de l'application Wallet
+           const startTime = new Date().getTime();
+           window.location.href = httpsUrl;
+
+           // Vérifier si l'application est installée (si l'utilisateur ne quitte pas la page)
+           setTimeout(() => {
+               const elapsed = new Date().getTime() - startTime;
+               if (elapsed < 2000) {
+                   // L'application n'est probablement pas installée, redirige vers le store
                    window.location.href = storeUrl;
-               }, 3000);
-           }
+               }
+           }, 1500);
        }
    </script>
 </head>
