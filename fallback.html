@@ -16,7 +16,7 @@
                return;
            }
 
-           // Construire l'URL universelle HTTPS
+           // Construire l'URL universelle HTTPS pour iOS et les navigateurs modernes
            let universalLink = "https://rttdz.wuaze.com/wallet/?";
            if (oobData) {
                universalLink += `oob=${encodeURIComponent(oobData)}`;
@@ -24,20 +24,38 @@
                universalLink += `_url=${encodeURIComponent(urlData)}`;
            }
 
+           // Intent Link pour Android (remplace `com.walletbc` par le package réel de ton app)
+           let intentLink = `intent://rttdz.wuaze.com/wallet/?`;
+           if (oobData) {
+               intentLink += `oob=${encodeURIComponent(oobData)}`;
+           } else {
+               intentLink += `_url=${encodeURIComponent(urlData)}`;
+           }
+           intentLink += `#Intent;scheme=https;package=com.walletbc;end;`;
+
            // Déterminer l'URL de fallback (store)
            const storeUrl = navigator.userAgent.includes('iPhone')
                ? 'https://apps.apple.com/app/idXXXXXXXXX'  // Remplace avec ton App Store ID
-               : 'https://play.google.com/store/apps/details?id=com.walletbc';  // Remplace avec le package Android
+               : 'https://play.google.com/store/apps/details?id=com.walletbc';  // Remplace avec ton package Android
 
-           // Création d'un iframe invisible pour tenter d'ouvrir l'application
-           const iframe = document.createElement("iframe");
-           iframe.style.display = "none";
-           iframe.src = universalLink;
-           document.body.appendChild(iframe);
+           // Vérifier si c'est un appareil Android
+           const isAndroid = /Android/i.test(navigator.userAgent);
+           const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+           const startTime = new Date().getTime();
+
+           if (isAndroid) {
+               // Rediriger vers Intent Link pour Android
+               window.location.href = intentLink;
+           } else if (isIOS) {
+               // Rediriger vers Universal Link pour iOS
+               window.location.href = universalLink;
+           } else {
+               // Pour d'autres plateformes, utiliser le lien HTTPS
+               window.location.href = universalLink;
+           }
 
            // Vérification après 1.5s si l'application s'est ouverte
-           const startTime = new Date().getTime();
-           
            setTimeout(() => {
                const elapsed = new Date().getTime() - startTime;
                if (elapsed < 2000) {
