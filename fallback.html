@@ -5,7 +5,7 @@
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
    <title>Redirection Wallet</title>
    <script>
-       async function openWallet() {
+       function openWallet() {
            // Récupérer les paramètres de l'URL
            const params = new URLSearchParams(window.location.search);
            const oobData = params.get('_oob');
@@ -29,28 +29,19 @@
                ? 'https://apps.apple.com/app/idXXXXXXXXX'  // Remplace avec ton App Store ID
                : 'https://play.google.com/store/apps/details?id=com.walletbc';  // Remplace avec le package Android
 
-           // Vérifier si l'URL existe avant de rediriger
-           try {
-               const response = await fetch(universalLink, { method: 'HEAD' });
-               if (response.status === 404) {
-                   console.warn("Page introuvable, redirection vers le store...");
-                   window.location.href = storeUrl;
-                   return;
-               }
-           } catch (error) {
-               console.warn("Échec de l'accès à l'URL du Wallet, redirection vers le store...");
-               window.location.href = storeUrl;
-               return;
-           }
+           // Création d'un iframe invisible pour tenter d'ouvrir l'application
+           const iframe = document.createElement("iframe");
+           iframe.style.display = "none";
+           iframe.src = universalLink;
+           document.body.appendChild(iframe);
 
-           // Redirection vers l'application via l'URL universelle
+           // Vérification après 1.5s si l'application s'est ouverte
            const startTime = new Date().getTime();
-           window.location.href = universalLink;
-
-           // Si l'utilisateur reste sur la page après 1.5s, il est redirigé vers le store
+           
            setTimeout(() => {
                const elapsed = new Date().getTime() - startTime;
                if (elapsed < 2000) {
+                   // L'application ne s'est pas ouverte, redirection vers le Store
                    window.location.href = storeUrl;
                }
            }, 1500);
