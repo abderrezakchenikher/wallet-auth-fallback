@@ -26,18 +26,8 @@
                httpsUrl += `_url=${urlData}`;
            }
 
-           try {
-               // Vérifier si l'URL est accessible avec un statut HTTP 200
-               const response = await fetch(httpsUrl, { method: 'HEAD', mode: 'no-cors' });
-
-               if (response.ok) {
-                   // Si l'URL répond correctement, rediriger vers le Wallet
                    window.location.href = httpsUrl;
-               } else {
-                   throw new Error("L'application ne semble pas installée.");
-               }
-           } catch (error) {
-               console.warn("Échec de l'accès à l'URL du Wallet, redirection vers le store.");
+
                
                // Redirection vers le store après 3 secondes
                setTimeout(() => {
@@ -47,7 +37,7 @@
 
                    window.location.href = storeUrl;
                }, 3000);
-           }
+           
        }
    </script>
 </head>
